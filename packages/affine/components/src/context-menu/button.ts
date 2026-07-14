@@ -3,7 +3,7 @@ import type { ClassInfo } from 'lit-html/directives/class-map.js';
 
 import { IS_MOBILE } from '@blocksuite/global/env';
 import {
-  CheckBoxCkeckSolidIcon,
+  CheckBoxCheckSolidIcon,
   CheckBoxUnIcon,
   DoneIcon,
 } from '@blocksuite/icons/lit';
@@ -229,7 +229,7 @@ export const menuButtonItems = {
       const data: MenuButtonData = {
         content: () => html`
           ${config.checked.value
-            ? CheckBoxCkeckSolidIcon({ style: `color:#1E96EB` })
+            ? CheckBoxCheckSolidIcon({ style: `color:#1E96EB` })
             : CheckBoxUnIcon()}
           <div class="affine-menu-action-text">
             ${config.label?.() ?? config.name}

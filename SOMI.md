@@ -47,3 +47,13 @@ When Somi distributes Executable Form of BlockSuite (e.g. board canvas bundles):
 3. Prefer Somi product integrations as **new files** (not in-place edits of Covered Software). Modified upstream files must remain MPL-2.0 and be available here.
 
 Somi Main documents attribution in `THIRD_PARTY_NOTICES`.
+
+## Fork deltas (MPL Modifications)
+
+Product-needed source changes on `somi/0.19.5` (beyond publish remap):
+
+| Version | Change |
+|---------|--------|
+| `0.19.5-somi.2` | Fix `CheckBoxCkeckSolidIcon` → `CheckBoxCheckSolidIcon` (matches `@blocksuite/icons`; removes need for Somi Vite rewrite) |
+
+When adding a delta: patch here → tag `v0.19.5-somi.N` → publish workflow → bump Somi Main pin → note in Somi `THIRD_PARTY_NOTICES`.
