@@ -1,0 +1,22 @@
+{
+  "version": "0.19.5-somi.0",
+  "packages": [
+    "@somi-ceo/blocksuite-affine",
+    "@somi-ceo/blocksuite-affine-block-embed",
+    "@somi-ceo/blocksuite-affine-block-list",
+    "@somi-ceo/blocksuite-affine-block-paragraph",
+    "@somi-ceo/blocksuite-affine-block-surface",
+    "@somi-ceo/blocksuite-affine-components",
+    "@somi-ceo/blocksuite-affine-model",
+    "@somi-ceo/blocksuite-affine-shared",
+    "@somi-ceo/blocksuite-affine-widget-scroll-anchoring",
+    "@somi-ceo/blocksuite-block-std",
+    "@somi-ceo/blocksuite-blocks",
+    "@somi-ceo/blocksuite-data-view",
+    "@somi-ceo/blocksuite-global",
+    "@somi-ceo/blocksuite-inline",
+    "@somi-ceo/blocksuite-presets",
+    "@somi-ceo/blocksuite-store",
+    "@somi-ceo/blocksuite-sync"
+  ]
+}

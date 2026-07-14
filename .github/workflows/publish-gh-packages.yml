@@ -1,0 +1,110 @@
+name: Publish GitHub Packages
+
+# Somi publish line: remaps @blocksuite/* → @somi-ceo/blocksuite-* and publishes to npm.pkg.github.com.
+# Upstream release.yml stays for toeverything; do not use it for Somi publishes.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Semver for this publish (e.g. 0.19.5-somi.0)
+        required: true
+        default: 0.19.5-somi.0
+  push:
+    tags:
+      - 'v*-somi.*'
+
+concurrency:
+  group: publish-gh-packages-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    if: github.repository == 'Somi-CEO/blocksuite'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Resolve version
+        id: ver
+        env:
+          INPUT_VERSION: ${{ github.event.inputs.version }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          if [ -n "$INPUT_VERSION" ]; then
+            echo "value=$INPUT_VERSION" >> "$GITHUB_OUTPUT"
+          else
+            # tags like v0.19.5-somi.0 → 0.19.5-somi.0
+            echo "value=${REF_NAME#v}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: yarn
+          registry-url: https://npm.pkg.github.com
+          scope: '@somi-ceo'
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Build packages
+        run: yarn build:packages
+
+      - name: Remap package names for GitHub Packages
+        run: node scripts/somi/remap-for-gh-packages.mjs --version=${{ steps.ver.outputs.value }}
+
+      - name: Upload remap manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: remap-manifest-${{ steps.ver.outputs.value }}
+          path: scripts/somi/last-remap-manifest.json
+          retention-days: 90
+
+      - name: Sync published-packages.json from remap manifest
+        run: |
+          cp scripts/somi/last-remap-manifest.json scripts/somi/published-packages.json
+          echo "Published package count: $(jq '.packages | length' scripts/somi/last-remap-manifest.json)"
+          jq -r '.packages[]' scripts/somi/last-remap-manifest.json
+
+      - name: Publish to GitHub Packages
+        env:
+          # Prefer org PAT when GITHUB_TOKEN alone cannot write packages linked elsewhere.
+          NODE_AUTH_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${NODE_AUTH_TOKEN}" ]; then
+            echo "::error::Missing GH_PACKAGES_TOKEN (and GITHUB_TOKEN empty)."
+            exit 1
+          fi
+          {
+            echo "@somi-ceo:registry=https://npm.pkg.github.com"
+            echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}"
+          } >> .npmrc
+          # Prefer explicit publish over yarn workspaces foreach after remap (names no longer match lockfile).
+          while IFS= read -r pkgjson; do
+            name=$(jq -r '.name // empty' "$pkgjson")
+            private=$(jq -r '.private // false' "$pkgjson")
+            case "$name" in
+              @somi-ceo/blocksuite-*) ;;
+              *) continue ;;
+            esac
+            if [ "$private" = "true" ]; then
+              continue
+            fi
+            echo "Publishing ${name}@$(jq -r .version "$pkgjson") from $(dirname "$pkgjson")"
+            (cd "$(dirname "$pkgjson")" && npm publish --access public)
+          done < <(find packages -name package.json -not -path '*/node_modules/*')

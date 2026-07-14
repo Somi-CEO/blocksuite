@@ -1,0 +1,48 @@
+name: Grant Somi Repo Package Access
+
+# Allow GITHUB_TOKEN in Somi-CEO/somi Actions to install @somi-ceo/blocksuite-* packages.
+on:
+  workflow_dispatch:
+
+permissions:
+  packages: write
+  contents: read
+
+jobs:
+  grant:
+    if: github.repository == 'Somi-CEO/blocksuite'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Grant Somi-CEO/somi Actions access to packages
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          REPO_ID=$(gh api repos/Somi-CEO/somi --jq .id)
+          echo "Somi repo id=${REPO_ID}"
+          names=$(jq -r '.packages[]' scripts/somi/published-packages.json | sed 's#@somi-ceo/##')
+          ok=0
+          fail=0
+          for name in $names; do
+            echo "Granting Actions access: ${name} -> Somi-CEO/somi"
+            gh api --method PUT \
+              -H "Accept: application/vnd.github+json" \
+              "/orgs/Somi-CEO/packages/npm/${name}/actions/permissions" \
+              -f access=selected \
+              -F allowed=true \
+              || true
+            if gh api --method PUT \
+              -H "Accept: application/vnd.github+json" \
+              "/orgs/Somi-CEO/packages/npm/${name}/actions/permissions/repositories/${REPO_ID}"; then
+              ok=$((ok + 1))
+            else
+              echo "::warning::Failed granting ${name}"
+              fail=$((fail + 1))
+            fi
+          done
+          echo "ok=${ok} fail=${fail}"
+          test "$ok" -gt 0
