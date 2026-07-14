@@ -124,8 +124,24 @@ for (const pkgPath of candidates) {
     }
   }
 
+  // Yarn `npm publish` promotes publishConfig.{exports,main,module,types,...} into the
+  // tarball package.json. Plain `npm publish` does not for all fields — so copy them
+  // onto the package root before publish so consumers resolve dist/, not src/.
+  const publishConfig = { ...(pkg.publishConfig || {}) };
+  for (const key of ['exports', 'main', 'module', 'types', 'browser', 'bin']) {
+    if (publishConfig[key] != null) {
+      pkg[key] = publishConfig[key];
+    }
+  }
+  delete publishConfig.exports;
+  delete publishConfig.main;
+  delete publishConfig.module;
+  delete publishConfig.types;
+  delete publishConfig.browser;
+  delete publishConfig.bin;
+
   pkg.publishConfig = {
-    ...(pkg.publishConfig || {}),
+    ...publishConfig,
     registry: GH_REGISTRY,
     // Public fork → public packages (Somi Main CI / local can install without a packages PAT
     // when org package visibility allows; Actions still use GH_PACKAGES_TOKEN / GITHUB_TOKEN).

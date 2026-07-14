@@ -1,5 +1,5 @@
 {
-  "version": "0.19.5-somi.0",
+  "version": "0.19.5-somi.1",
   "packages": [
     "@somi-ceo/blocksuite-affine",
     "@somi-ceo/blocksuite-affine-block-embed",

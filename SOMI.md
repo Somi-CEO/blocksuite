@@ -21,6 +21,10 @@ At publish time, CI runs `scripts/somi/remap-for-gh-packages.mjs` and publishes:
 
 - `@blocksuite/foo` → `@somi-ceo/blocksuite-foo` on `https://npm.pkg.github.com`
 
+At remap time, `publishConfig.exports` / `main` / `types` are promoted onto the package root
+so `npm publish` tarballs resolve `dist/` like upstream Yarn publishes (plain npm does not
+apply those fields automatically).
+
 Workflow: `.github/workflows/publish-gh-packages.yml`
 
 Trigger: push tag `v0.19.5-somi.N` (workflows live on `somi/0.19.5`; `workflow_dispatch` from the Actions UI needs the workflow file on the default branch too).
