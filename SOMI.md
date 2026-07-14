@@ -1,21 +1,30 @@
 # Somi fork notes (`Somi-CEO/blocksuite`)
 
+## Ownership
+
+`Somi-CEO/blocksuite` is the **maintenance trunk** for Somi’s BlockSuite pin.
+
+- Standalone [toeverything/blocksuite](https://github.com/toeverything/blocksuite) last shipped ~`v0.22.4` / sync commits in mid-2025; active editor work lives inside the AFFiNE monorepo now.
+- Do **not** wait on upstream PRs or assume merge-back to `toeverything/blocksuite`. Patch product and security fixes here, version as `0.19.5-somi.N`, publish, bump Somi Main.
+- `main` on this fork may diverge / conflict with GitHub’s default; **`somi/0.19.5` is the source of truth** for packages Somi installs.
+
 ## Branches
 
-| Branch | Role |
-|--------|------|
-| `main` | Upstream-style default (may lag). Prefer versioned Somi branches for publish. |
-| `somi/0.19.5` | Working branch for the `0.19.5` pin used by Somi Main. Publish tooling and Somi deltas land here. |
+| Branch        | Role                                                                                   |
+| ------------- | -------------------------------------------------------------------------------------- |
+| `main`        | Historical / upstream-shaped default. Not the publish line.                            |
+| `somi/0.19.5` | **Maintenance trunk** for the `0.19.5` pin. Publish tooling and Somi deltas land here. |
 
 ## Versions
 
-- Track upstream release tags when doing drop-in replacements (e.g. `v0.19.5`).
+- Base pin: upstream tag `v0.19.5` (what Somi Main originally depended on).
 - Somi publish versions use a preid: `0.19.5-somi.0`, `0.19.5-somi.1`, …
 - Git tags for publishes: `v0.19.5-somi.0` (optional; `workflow_dispatch` works without a tag).
+- Optional later: re-base onto a newer AFFiNE-extracted BlockSuite only if product needs it — not required for day-to-day fixes.
 
 ## Publish (GitHub Packages)
 
-Source package names stay `@blocksuite/*` in git (upstream sync stays easy).
+Source package names stay `@blocksuite/*` in git (keeps import paths stable inside the fork).
 
 At publish time, CI runs `scripts/somi/remap-for-gh-packages.mjs` and publishes:
 
@@ -52,8 +61,8 @@ Somi Main documents attribution in `THIRD_PARTY_NOTICES`.
 
 Product-needed source changes on `somi/0.19.5` (beyond publish remap):
 
-| Version | Change |
-|---------|--------|
+| Version         | Change                                                                                                                    |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | `0.19.5-somi.2` | Fix `CheckBoxCkeckSolidIcon` → `CheckBoxCheckSolidIcon` (matches `@blocksuite/icons`; removes need for Somi Vite rewrite) |
 
-When adding a delta: patch here → tag `v0.19.5-somi.N` → publish workflow → bump Somi Main pin → note in Somi `THIRD_PARTY_NOTICES`.
+When adding a delta: patch on `somi/0.19.5` → tag `v0.19.5-somi.N` → publish workflow → bump Somi Main pin → note in Somi `THIRD_PARTY_NOTICES` (MPL Modifications). No upstream PR required.
