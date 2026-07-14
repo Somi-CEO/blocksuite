@@ -1,0 +1,53 @@
+name: Set BlockSuite Packages Public
+
+# Mark published @somi-ceo/blocksuite-* packages public using the committed name list.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  packages: write
+  contents: read
+
+jobs:
+  make-public:
+    if: github.repository == 'Somi-CEO/blocksuite'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Make packages public
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          names=$(jq -r '.packages[]' scripts/somi/published-packages.json | sed 's#@somi-ceo/##')
+          ok=0
+          fail=0
+          for name in $names; do
+            echo "Setting public: @somi-ceo/${name}"
+            if gh api --method POST \
+              -H "Accept: application/vnd.github+json" \
+              "/orgs/Somi-CEO/packages/npm/${name}/visibility" \
+              -f visibility=public; then
+              ok=$((ok + 1))
+            else
+              echo "POST failed for ${name}, trying PUT..."
+              if gh api --method PUT \
+                -H "Accept: application/vnd.github+json" \
+                "/orgs/Somi-CEO/packages/npm/${name}/visibility" \
+                -f visibility=public; then
+                ok=$((ok + 1))
+              else
+                echo "::warning::Failed to set ${name} public"
+                fail=$((fail + 1))
+              fi
+            fi
+          done
+          echo "ok=${ok} fail=${fail}"
+          if [ "$fail" -gt 0 ] && [ "$ok" -eq 0 ]; then
+            exit 1
+          fi
