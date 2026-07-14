@@ -64,5 +64,6 @@ Product-needed source changes on `somi/0.19.5` (beyond publish remap):
 | Version         | Change                                                                                                                    |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | `0.19.5-somi.2` | Fix `CheckBoxCkeckSolidIcon` → `CheckBoxCheckSolidIcon` (matches `@blocksuite/icons`; removes need for Somi Vite rewrite) |
+| `0.19.5-somi.3` | Optional `EdgelessFileIngestProvider` DI hook in `addImages` / `addAttachments` (Somi media ingest without Vite alias)    |
 
 When adding a delta: patch on `somi/0.19.5` → tag `v0.19.5-somi.N` → publish workflow → bump Somi Main pin → note in Somi `THIRD_PARTY_NOTICES` (MPL Modifications). No upstream PR required.

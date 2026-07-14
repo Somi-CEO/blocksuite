@@ -16,7 +16,10 @@ import {
   EMBED_CARD_HEIGHT,
   EMBED_CARD_WIDTH,
 } from '@blocksuite/affine-shared/consts';
-import { TelemetryProvider } from '@blocksuite/affine-shared/services';
+import {
+  EdgelessFileIngestProvider,
+  TelemetryProvider,
+} from '@blocksuite/affine-shared/services';
 import {
   handleNativeRangeAtPoint,
   humanFileSize,
@@ -44,6 +47,11 @@ export async function addAttachments(
   files: File[],
   point?: IVec
 ): Promise<string[]> {
+  const ingest = std.getOptional(EdgelessFileIngestProvider);
+  if (ingest) {
+    return ingest.addAttachments(std, files, point);
+  }
+
   if (!files.length) return [];
 
   const attachmentService = std.getService('affine:attachment');
@@ -121,6 +129,11 @@ export async function addImages(
   files: File[],
   point?: IVec
 ): Promise<string[]> {
+  const ingest = std.getOptional(EdgelessFileIngestProvider);
+  if (ingest) {
+    return ingest.addImages(std, files, point);
+  }
+
   const imageFiles = [...files].filter(file => file.type.startsWith('image/'));
   if (!imageFiles.length) return [];
 
