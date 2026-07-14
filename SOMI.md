@@ -23,6 +23,10 @@ At publish time, CI runs `scripts/somi/remap-for-gh-packages.mjs` and publishes:
 
 Workflow: `.github/workflows/publish-gh-packages.yml`
 
+Trigger: push tag `v0.19.5-somi.N` (workflows live on `somi/0.19.5`; `workflow_dispatch` from the Actions UI needs the workflow file on the default branch too).
+
+Packages often publish as **private** on GitHub Packages even with `--access public`. Somi Main installs with `GH_PACKAGES_TOKEN` (same as Univer). Use `.github/workflows/set-packages-public.yml` / grant-access workflows when org package settings allow.
+
 External packages that stay on public npm (not remapped):
 
 - `@blocksuite/icons`
