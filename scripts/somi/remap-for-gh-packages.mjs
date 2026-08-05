@@ -1,9 +1,9 @@
 /**
- * Remap @blocksuite/* workspace packages for GitHub Packages publish under @somi-ceo.
+ * Remap @blocksuite/* workspace packages for GitHub Packages publish under @somi-co.
  *
  * Mutates package.json files in the working tree only (do not commit).
  *
- * Mapping: @blocksuite/foo → @somi-ceo/blocksuite-foo
+ * Mapping: @blocksuite/foo → @somi-co/blocksuite-foo
  *
  * Usage:
  *   node scripts/somi/remap-for-gh-packages.mjs [--version=0.19.5-somi.0]
@@ -15,7 +15,7 @@ import { fileURLToPath } from 'node:url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '../..');
 const GH_REGISTRY = 'https://npm.pkg.github.com';
-const REPO_URL = 'https://github.com/Somi-CEO/blocksuite';
+const REPO_URL = 'https://github.com/somi-co/blocksuite';
 
 const versionArg = process.argv.find((a) => a.startsWith('--version='));
 const TARGET_VERSION = versionArg ? versionArg.slice('--version='.length) : '0.19.5-somi.0';
@@ -29,7 +29,7 @@ function remapScopeName(name) {
   if (typeof name !== 'string') return name;
   if (EXTERNAL_BLOCKSUITE.has(name)) return name;
   if (name.startsWith('@blocksuite/')) {
-    return `@somi-ceo/blocksuite-${name.slice('@blocksuite/'.length)}`;
+    return `@somi-co/blocksuite-${name.slice('@blocksuite/'.length)}`;
   }
   return name;
 }
@@ -55,7 +55,7 @@ function remapDepsObject(deps) {
       continue;
     }
     const nextKey = remapScopeName(key);
-    // Only rewrite versions for remapped @blocksuite (now @somi-ceo) deps
+    // Only rewrite versions for remapped @blocksuite (now @somi-co) deps
     if (key.startsWith('@blocksuite/')) {
       out[nextKey] = remapDepValue(value);
     } else {
