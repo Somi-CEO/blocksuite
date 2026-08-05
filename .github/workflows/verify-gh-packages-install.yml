@@ -1,6 +1,6 @@
 name: Verify GH Packages Install
 
-# Smoke: install published @somi-ceo/blocksuite-* packages.
+# Smoke: install published @somi-co/blocksuite-* packages.
 on:
   workflow_dispatch:
     inputs:
@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   verify:
-    if: github.repository == 'Somi-CEO/blocksuite'
+    if: github.repository == 'somi-co/blocksuite'
     runs-on: ubuntu-latest
     steps:
       - name: Setup Node.js
@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: 20
           registry-url: https://npm.pkg.github.com
-          scope: '@somi-ceo'
+          scope: '@somi-co'
 
       - name: Install store + presets + blocks
         env:
@@ -33,9 +33,9 @@ jobs:
           mkdir -p /tmp/pkgtest && cd /tmp/pkgtest
           npm init -y
           npm install \
-            "@somi-ceo/blocksuite-store@${PKG_VERSION}" \
-            "@somi-ceo/blocksuite-presets@${PKG_VERSION}" \
-            "@somi-ceo/blocksuite-blocks@${PKG_VERSION}"
-          node -e "console.log(require('@somi-ceo/blocksuite-store/package.json').version)"
-          node -e "console.log(require('@somi-ceo/blocksuite-presets/package.json').version)"
-          node -e "console.log(require('@somi-ceo/blocksuite-blocks/package.json').version)"
+            "@somi-co/blocksuite-store@${PKG_VERSION}" \
+            "@somi-co/blocksuite-presets@${PKG_VERSION}" \
+            "@somi-co/blocksuite-blocks@${PKG_VERSION}"
+          node -e "console.log(require('@somi-co/blocksuite-store/package.json').version)"
+          node -e "console.log(require('@somi-co/blocksuite-presets/package.json').version)"
+          node -e "console.log(require('@somi-co/blocksuite-blocks/package.json').version)"

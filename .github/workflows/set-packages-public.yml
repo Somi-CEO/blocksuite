@@ -1,6 +1,6 @@
 name: Set BlockSuite Packages Public
 
-# Mark published @somi-ceo/blocksuite-* packages public using the committed name list.
+# Mark published @somi-co/blocksuite-* packages public using the committed name list.
 
 on:
   workflow_dispatch:
@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   make-public:
-    if: github.repository == 'Somi-CEO/blocksuite'
+    if: github.repository == 'somi-co/blocksuite'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -24,21 +24,21 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          names=$(jq -r '.packages[]' scripts/somi/published-packages.json | sed 's#@somi-ceo/##')
+          names=$(jq -r '.packages[]' scripts/somi/published-packages.json | sed 's#@somi-co/##')
           ok=0
           fail=0
           for name in $names; do
-            echo "Setting public: @somi-ceo/${name}"
+            echo "Setting public: @somi-co/${name}"
             if gh api --method POST \
               -H "Accept: application/vnd.github+json" \
-              "/orgs/Somi-CEO/packages/npm/${name}/visibility" \
+              "/orgs/somi-co/packages/npm/${name}/visibility" \
               -f visibility=public; then
               ok=$((ok + 1))
             else
               echo "POST failed for ${name}, trying PUT..."
               if gh api --method PUT \
                 -H "Accept: application/vnd.github+json" \
-                "/orgs/Somi-CEO/packages/npm/${name}/visibility" \
+                "/orgs/somi-co/packages/npm/${name}/visibility" \
                 -f visibility=public; then
                 ok=$((ok + 1))
               else

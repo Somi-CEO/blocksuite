@@ -1,8 +1,8 @@
-# Somi fork notes (`Somi-CEO/blocksuite`)
+# Somi fork notes (`somi-co/blocksuite`)
 
 ## Ownership
 
-`Somi-CEO/blocksuite` is the **maintenance trunk** for Somi’s BlockSuite pin.
+`somi-co/blocksuite` is the **maintenance trunk** for Somi’s BlockSuite pin.
 
 - Standalone [toeverything/blocksuite](https://github.com/toeverything/blocksuite) last shipped ~`v0.22.4` / sync commits in mid-2025; active editor work lives inside the AFFiNE monorepo now.
 - Do **not** wait on upstream PRs or assume merge-back to `toeverything/blocksuite`. Patch product and security fixes here, version as `0.19.5-somi.N`, publish, bump Somi Main.
@@ -28,7 +28,7 @@ Source package names stay `@blocksuite/*` in git (keeps import paths stable insi
 
 At publish time, CI runs `scripts/somi/remap-for-gh-packages.mjs` and publishes:
 
-- `@blocksuite/foo` → `@somi-ceo/blocksuite-foo` on `https://npm.pkg.github.com`
+- `@blocksuite/foo` → `@somi-co/blocksuite-foo` on `https://npm.pkg.github.com`
 
 At remap time, `publishConfig.exports` / `main` / `types` are promoted onto the package root
 so `npm publish` tarballs resolve `dist/` like upstream Yarn publishes (plain npm does not
@@ -52,7 +52,7 @@ Upstream BlockSuite is **MPL-2.0** (see `LICENSE`). File-level copyleft applies 
 When Somi distributes Executable Form of BlockSuite (e.g. board canvas bundles):
 
 1. Retain MPL notices / copyright in Source Code Form.
-2. Point recipients at this repository (and the exact tag / branch) as Source Code Form — currently `https://github.com/Somi-CEO/blocksuite` branch `somi/0.19.5`.
+2. Point recipients at this repository (and the exact tag / branch) as Source Code Form — currently `https://github.com/somi-co/blocksuite` branch `somi/0.19.5`.
 3. Prefer Somi product integrations as **new files** (not in-place edits of Covered Software). Modified upstream files must remain MPL-2.0 and be available here.
 
 Somi Main documents attribution in `THIRD_PARTY_NOTICES`.
